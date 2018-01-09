@@ -1,3 +1,5 @@
+# Play a single-player Battleship game with turn limits!
+
 from random import randint
 
 # initialize variables

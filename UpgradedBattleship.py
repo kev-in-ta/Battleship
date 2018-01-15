@@ -1,17 +1,21 @@
-# Play a single-player Battleship game with turn limits!
+# Play a two-player Battleship game with turn limits!
 
 from random import randint
 
 # initialize variables
-board =[]
-ship_list = []
+board1 =[]
+board2 = []
+ship_list1 = []
+ship_list2 = []
 hit = 0
-numships = 0
+numships1 = 0
+numships2 = 0
 generations = 1
 turns_allowed = 15
 
 for x in range(5):
-  board.append(["O"] * 5)
+  board1.append(["O"] * 5)
+  board2.append(["O"] * 5)
 
 # function: initialize board
 def clear_board (board):
@@ -35,16 +39,16 @@ def random_col(board):
   return randint(1, len(board[0]))
 
 # function: adds a ship coordinate
-def generate_ship(list, numships):
+def generate_ship(list, numships, board):
   ship_row = random_row(board)
   ship_col = random_col(board)
   if (ship_row, ship_col) not in list:
       list.append((ship_row, ship_col))
   else:
-      generate_ship(list, numships)
+      generate_ship(list, numships, board)
   return numships + 1
 
-def generate_ship2(list, numships):
+def generate_ship2(list, numships, board):
   ship_row = random_row(board)
   ship_col = random_col(board)
   direction = randint(1,4)
@@ -64,11 +68,11 @@ def generate_ship2(list, numships):
     list.append((ship_row, ship_col))
     list.append((ship_row2,ship_col2))
   else:
-      generate_ship2(list, numships)
+      generate_ship2(list, numships, board)
   return numships + 2
 
 
-def generate_ship3(list, numships):
+def generate_ship3(list, numships, board):
   ship_row = random_row(board)
   ship_col = random_col(board)
   direction = randint(1,2)
@@ -83,17 +87,17 @@ def generate_ship3(list, numships):
     ship_col2 = ship_col + 1
     ship_col3 = ship_col - 1
   if (((ship_row == 1 or ship_row == 5) and direction == 2) or ((ship_col == 1 or ship_col == 5) and direction == 1)):
-    generate_ship3(list, numships)
+    generate_ship3(list, numships, board)
   elif (ship_row, ship_col) not in list and (ship_row2, ship_col2) not in list and (ship_row3, ship_col3) not in list:
     list.append((ship_row, ship_col))
     list.append((ship_row2, ship_col2))
     list.append((ship_row3, ship_col3))
   else:
-    generate_ship3(list, numships)
+    generate_ship3(list, numships, board)
   return numships + 3
 
 # function: repeated game
-def guess_ship(board, ship_list, turn, turns_allowed, hit):
+def guess_ship(board, ship_list, turn, turns_allowed, hit, numships):
   guess_row = int(input("Guess Row: "))
   guess_col = int(input("Guess Col: "))
 
@@ -119,34 +123,56 @@ def guess_ship(board, ship_list, turn, turns_allowed, hit):
   return hit
 
 # function: initiates the game
-def play_game(board, ship_list, turns_allowed, hit, numships):
-  for turn in range(turns_allowed):
-    print ("Turn", turn + 1)
-    hit = guess_ship(board, ship_list, turn, turns_allowed, hit)
-    if hit == numships:
-      break
-  hit = 0
-  ditto = input("Would you like to play again? (y/n)")
-  if ditto == "y":
-    clear_board(board)
-    numships = 0
-    for i in range(generations):
-      numships = generate_ship3(ship_list, numships)
-      numships = generate_ship2(ship_list, numships)
-    print (ship_list)
-    print_board(board)
-    play_game(board, ship_list, turns_allowed, hit, numships)
+def play_game(board1, board2, ship_list1, ship_list2, turns_allowed, numships1, numships2):
+  ditto = "y"
+  hit1 = 0
+  hit2 = 0
+  while ditto == "y":
+      for turn in range(turns_allowed):
+        print ("Turn", turn + 1)
+        print ("Player 1 Guess")
+        hit1 = guess_ship(board2, ship_list2, turn, turns_allowed, hit2, numships2)
+        if hit2 == numships2:
+          break
+        print ("Player 2 Guess")
+        hit1 = guess_ship(board1, ship_list1, turn, turns_allowed, hit1, numships1)
+        if hit1 == numships1:
+          break
+      hit1 = 0
+      hit2 = 0
+      ditto = input("Would you like to play again? (y/n)")
+      if ditto == "y":
+        clear_board(board1)
+        clear_board(board2)
+        numships1 = 0
+        numships2 = 0
+        for i in range(generations):
+          numships1 = generate_ship3(ship_list1, numships1, board1)
+          numships1 = generate_ship2(ship_list1, numships1, board1)
+          numships2 = generate_ship3(ship_list2, numships2, board2)
+          numships2 = generate_ship2(ship_list2, numships2, board2)
+        print (ship_list1)
+        print (ship_list2)
+        print_board(board1)
+        print_board(board2)
 
 # generate battleships
-clear_board(board)
+clear_board(board1)
+clear_board(board2)
 for i in range(generations):
-  numships = generate_ship3(ship_list, numships)
-  numships = generate_ship2(ship_list, numships)
+  numships1 = generate_ship3(ship_list1, numships1, board1)
+  numships1 = generate_ship2(ship_list1, numships1, board1)
+  numships2 = generate_ship3(ship_list2, numships2, board2)
+  numships2 = generate_ship2(ship_list2, numships2, board2)
 
 print("Welcome to Battleship! Columns and rows are numbered 1 to 5.")
 
-print (ship_list, '\n')
+print ("Player 1 Board")
+print (ship_list2, '\n')
+print ("Player 2 Board")
+print (ship_list1, '\n')
 
-print_board(board)
+print_board(board1)
+print_board(board2)
 
-play_game(board, ship_list, turns_allowed, hit, numships)
+play_game(board1, board2, ship_list1, ship_list2, turns_allowed, numships1, numships2)

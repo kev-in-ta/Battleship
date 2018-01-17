@@ -103,21 +103,19 @@ def guess_ship(board, ship_list, turn, turns_allowed, hit, numships):
 
   if (guess_row, guess_col) in ship_list:
     ship_list.remove((guess_row, guess_col))
-    print ("Congratulations! You sunk a battleship!")
+    print ("Congratulations! You sunk a battleship! \n")
     hit += 1
     if hit == numships:
-      print ("My ships are destroyed!")
+      print ("All ships are destroyed! \n")
     board[guess_row-1][guess_col-1] = "+"
-    print_board(board)
   else:
     if (guess_row < 1 or guess_row > 5) or (guess_col < 1 or guess_col > 5):
-      print ("Oops, that's not even in the ocean.")
+      print ("Oops, that's not even in the ocean. \n")
     elif(board[guess_row-1][guess_col-1] == "X" or board[guess_row-1][guess_col-1] == "+"):
-      print ("You guessed that one already.")
+      print ("You guessed that one already. \n")
     else:
-      print ("You missed my battleship!")
+      print ("You missed my battleship! \n")
       board[guess_row-1][guess_col-1] = "X"  
-    print_board(board)
     if turn == turns_allowed - 1:
       print ("Game Over")
   return hit
@@ -129,15 +127,21 @@ def play_game(board1, board2, ship_list1, ship_list2, turns_allowed, numships1, 
   hit2 = 0
   while ditto == "y":
       for turn in range(turns_allowed):
-        print ("Turn", turn + 1)
+        print ("Turn %d \n" % (turn + 1))
         print ("Player 1 Guess")
-        hit1 = guess_ship(board2, ship_list2, turn, turns_allowed, hit2, numships2)
+        hit2 = guess_ship(board2, ship_list2, turn, turns_allowed, hit2, numships2)
         if hit2 == numships2:
+          print ('Player 1 Wins!')
           break
+        print_board(board1)
+        print_board(board2)
         print ("Player 2 Guess")
         hit1 = guess_ship(board1, ship_list1, turn, turns_allowed, hit1, numships1)
         if hit1 == numships1:
+          print ('Player 2 wins!')
           break
+        print_board(board1)
+        print_board(board2)
       hit1 = 0
       hit2 = 0
       ditto = input("Would you like to play again? (y/n)")
